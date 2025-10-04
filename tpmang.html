@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Các Thành Phần Của Mạng Máy Tính</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bfdbfe 0.5px, transparent 0.5px);
+            background-size: 15px 15px;
+            overflow-x: hidden;
+        }
+        .network-component {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            z-index: 10;
+            background-color: white;
+        }
+        .network-component:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .line {
+            position: absolute;
+            background-color: #3b82f6;
+            z-index: 0;
+        }
+        .line.animated {
+             background-image: linear-gradient(to right, #3b82f6 60%, transparent 40%);
+            background-size: 14px 3px;
+            animation: move-dashes 1.5s linear infinite;
+        }
+        /* Style cho đường nối nội bộ (phần mềm -> máy tính) */
+        .line.internal {
+            background-image: none;
+            background-color: #94a3b8; /* Slate 400 */
+            height: 2px;
+            animation: none;
+            z-index: 5; /* Nằm dưới các đường chính */
+        }
+        @keyframes move-dashes {
+            from { background-position: 0 0; }
+            to { background-position: -28px 0; }
+        }
+        #modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <header class="text-center mb-10 md:mb-16">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-700">Khám Phá Mạng Máy Tính</h1>
+            <p class="mt-3 text-lg text-slate-600">Hãy nhấp vào từng thành phần để tìm hiểu chức năng của chúng nhé!</p>
+        </header>
+
+        <!-- Sơ đồ mạng -->
+        <div id="network-diagram" class="relative w-full max-w-5xl mx-auto min-h-[800px] flex flex-col items-center">
+            <!-- Dòng 1: Internet -->
+            <div id="internet-el" class="network-component p-4 rounded-xl shadow-md flex flex-col items-center w-40">
+                <svg class="w-16 h-16 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35,10.04C18.67,6.59,15.64,4,12,4C9.11,4,6.6,5.64,5.35,8.04C2.34,8.36,0,10.91,0,14c0,3.31,2.69,6,6,6h13c2.76,0,5-2.24,5-5C24,12.36,21.95,10.22,19.35,10.04Z"/></svg>
+                <p class="font-semibold mt-2">Internet</p>
+            </div>
+
+            <!-- Dòng 2: Modem -->
+            <div id="modem-el" class="network-component p-4 my-6 rounded-xl shadow-lg border-2 border-blue-500 flex flex-col items-center w-48">
+                 <svg class="w-16 h-16 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.44,9.33,19,8.44V6A1,1,0,0,0,18,5H6A1,1,0,0,0,5,6V8.44L3.56,9.33A1,1,0,0,0,3,10.22v1.55a1,1,0,0,0,.56.89L5,13.56V18a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V13.56l1.44-.88a1,1,0,0,0,.56-.89V10.22A1,1,0,0,0,20.44,9.33ZM17,17H7V7H17ZM15.5,10.5a.5.5,0,1,1-.5-.5A.5.5,0,0,1,15.5,10.5Zm-4,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,11.5,10.5Zm-4,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,7.5,10.5Z"/><path d="M12,1a1,1,0,0,0-1,1V4a1,1,0,0,0,2,0V2A1,1,0,0,0,12,1Zm6.07,3.93a1,1,0,0,0-1.41,0l-1.42,1.42a1,1,0,0,0,1.42,1.41l1.41-1.41A1,1,0,0,0,18.07,4.93ZM5.93,4.93a1,1,0,0,0,0,1.41L7.34,7.76A1,1,0,0,0,8.76,6.34L7.34,4.93A1,1,0,0,0,5.93,4.93Z" opacity=".4"/></svg>
+                <p class="font-semibold mt-2">Modem</p>
+            </div>
+            
+            <!-- Dòng 3: Switch -->
+            <div id="switch-el" class="network-component p-4 my-6 rounded-xl shadow-lg border-2 border-blue-500 flex flex-col items-center w-48">
+                 <svg class="w-16 h-16 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22,12.5v-2a1,1,0,0,0-1-1H3a1,1,0,0,0-1,1v2a1,1,0,0,0,1,1H21A1,1,0,0,0,22,12.5ZM6.5,12A.5.5,0,1,1,6,11.5.5.5,0,0,1,6.5,12Zm3,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,9.5,12Zm3,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,12.5,12Zm3,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,15.5,12Zm3,0a.5.5,0,1,1-.5-.5A.5.5,0,0,1,18.5,12Z"/></svg>
+                <p class="font-semibold mt-2">Switch</p>
+            </div>
+
+            <!-- Dòng 4: Người dùng -->
+            <div class="w-full flex justify-around mt-8">
+                <!-- Nhóm của An -->
+                <div id="user-an" class="flex flex-col items-center gap-4">
+                    <h2 class="text-2xl font-black text-slate-800">An</h2>
+                    <div id="an-pc" class="network-component p-4 rounded-xl shadow-md flex flex-col items-center w-48">
+                         <svg class="w-16 h-16 text-sky-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20,16H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H20a2,2,0,0,1,2,2v8A2,2,0,0,1,20,16Zm-7-3a1,1,0,0,0,1-1V7a1,1,0,0,0-2,0v5A1,1,0,0,0,13,13Z"/><path d="M12,18H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Z" opacity=".4"/></svg>
+                         <p class="font-semibold mt-2">Máy tính của An</p>
+                    </div>
+                    <div class="software-grid w-full max-w-xs">
+                        <!-- Software An -->
+                    </div>
+                </div>
+
+                <!-- Nhóm của Bình -->
+                <div id="user-binh" class="flex flex-col items-center gap-4">
+                    <h2 class="text-2xl font-black text-slate-800">Bình</h2>
+                    <div id="binh-pc" class="network-component p-4 rounded-xl shadow-md flex flex-col items-center w-48">
+                         <svg class="w-16 h-16 text-sky-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20,16H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H20a2,2,0,0,1,2,2v8A2,2,0,0,1,20,16Zm-7-3a1,1,0,0,0,1-1V7a1,1,0,0,0-2,0v5A1,1,0,0,0,13,13Z"/><path d="M12,18H5a1,1,0,0,0,0,2H19a1,1,0,0,0,0-2Z" opacity=".4"/></svg>
+                         <p class="font-semibold mt-2">Máy tính của Bình</p>
+                    </div>
+                     <div class="software-grid w-full max-w-xs">
+                        <!-- Software Bình -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cửa sổ thông tin (Modal) -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center p-4 z-50 opacity-0 pointer-events-none">
+        <div id="modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8 transform scale-95 opacity-0">
+            <div class="flex justify-between items-start">
+                <h2 id="modal-title" class="text-2xl font-bold text-blue-700"></h2>
+                <button id="close-modal" class="text-slate-400 hover:text-slate-800 transition">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p id="modal-description" class="mt-4 text-base md:text-lg text-slate-600 leading-relaxed"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const componentData = {
+                internet: {
+                    el: document.getElementById('internet-el'),
+                    title: 'Internet',
+                    description: 'Đây là mạng máy tính toàn cầu, kết nối hàng tỷ thiết bị trên khắp thế giới. Nó giống như một thư viện khổng lồ chứa mọi thông tin, dịch vụ giải trí và cho phép mọi người giao tiếp với nhau.'
+                },
+                modem: {
+                    el: document.getElementById('modem-el'),
+                    title: 'Modem',
+                    description: 'Thiết bị này kết nối nhà bạn với mạng Internet từ nhà cung cấp dịch vụ. Nó có chức năng "dịch" tín hiệu từ đường truyền của nhà mạng thành tín hiệu mà các thiết bị mạng có thể hiểu được.'
+                },
+                switch: {
+                    el: document.getElementById('switch-el'),
+                    title: 'Switch',
+                    description: 'Switch (bộ chia mạng) dùng để kết nối nhiều máy tính với nhau bằng dây mạng trong một khu vực nhỏ (như lớp học, văn phòng), tạo thành một mạng nội bộ (LAN) và chia sẻ kết nối từ modem.'
+                },
+                an_pc: {
+                    el: document.getElementById('an-pc'),
+                    title: 'Máy Tính',
+                    description: 'Đây là thiết bị đầu cuối như máy tính để bàn, laptop, hoặc điện thoại. Chúng có khả năng gửi và nhận thông tin qua mạng. Em dùng chúng để học tập, xem video, chơi game và liên lạc với bạn bè.'
+                },
+                binh_pc: {
+                    el: document.getElementById('binh-pc'),
+                    title: 'Máy Tính',
+                    description: 'Đây là thiết bị đầu cuối như máy tính để bàn, laptop, hoặc điện thoại. Chúng có khả năng gửi và nhận thông tin qua mạng. Em dùng chúng để học tập, xem video, chơi game và liên lạc với bạn bè.'
+                },
+                software: [
+                    { 
+                        id: 'an-win10',
+                        user: 'an',
+                        icon: `<svg class="w-12 h-12 text-[#0078d4]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.25,3.26l-8,1.07v7.82h8v-8.89Zm0,9.89h-8v7.82l8,1.07v-8.89Zm1.5,0v8.89l8,1.07v-7.82h-8Zm0-9.89v8.89h8v-7.82l-8-1.07Z"/></svg>`,
+                        label: 'Windows 10',
+                    },
+                    { 
+                        id: 'an-chrome',
+                        user: 'an',
+                        icon: `<svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.94,11A9,9,0,0,0,12,3a9,9,0,0,0-8.94,8H20.94Z" fill="#4285F4"/><path d="M3.06,13a9,9,0,0,0,8.94,8,9,9,0,0,0,8.6-5.55H7.39A8.44,8.44,0,0,1,3.06,13Z" fill="#34A853"/><path d="M12,21a9,9,0,0,0,8.94-8h-17A9,9,0,0,0,12,21Z" fill="#FBBC05"/><path d="M12,12a3,3,0,1,1,3-3,3,3,0,0,1-3,3Z" fill="#4285F4"/><path d="M12,12a3,3,0,1,1-3,3,3,3,0,0,1,3-3Z" fill="#EA4335"/></svg>`,
+                        label: 'Chrome',
+                    },
+                    { 
+                        id: 'an-fb',
+                        user: 'an',
+                        icon: `<svg class="w-12 h-12 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm3,10.25a.74.74,0,0,1-.75.75H13V17a.75.75,0,0,1-1.5,0V13H10.25a.75.75,0,0,1,0-1.5H11.5V10a1.25,1.25,0,0,1,1.25-1.25H14.25a.75.75,0,0,1,0,1.5H13v1.25h1.25A.75.75,0,0,1,15,12.25Z"/></svg>`,
+                        label: 'Facebook',
+                    },
+                    { 
+                        id: 'binh-win10',
+                        user: 'binh',
+                        icon: `<svg class="w-12 h-12 text-[#0078d4]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.25,3.26l-8,1.07v7.82h8v-8.89Zm0,9.89h-8v7.82l8,1.07v-8.89Zm1.5,0v8.89l8,1.07v-7.82h-8Zm0-9.89v8.89h8v-7.82l-8-1.07Z"/></svg>`,
+                        label: 'Windows 10',
+                    },
+                    { 
+                        id: 'binh-coccoc',
+                        user: 'binh',
+                        icon: `<svg class="w-12 h-12 text-[#279543]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm4.41,12.41a1,1,0,0,1-1.41,0L12,11.41l-3,3a1,1,0,0,1-1.41-1.41L10.59,10,7.59,7A1,1,0,0,1,9,5.59L12,8.59l3-3A1,1,0,1,1,16.41,7L13.41,10l3,3A1,1,0,0,1,16.41,14.41Z"/></svg>`,
+                        label: 'Cốc Cốc',
+                    }
+                ]
+            };
+            
+            const diagram = document.getElementById('network-diagram');
+
+            // --- Tạo các thành phần phần mềm ---
+            const softwareDescription = 'Đây là các chương trình và ứng dụng được cài đặt trên máy tính. Ví dụ như hệ điều hành (Windows), trình duyệt web (Chrome, Cốc Cốc), hoặc mạng xã hội (Facebook). Chúng giúp con người giao tiếp và sử dụng các tài nguyên trên mạng.';
+            componentData.software.forEach(sw => {
+                const container = document.querySelector(`#user-${sw.user} .software-grid`);
+                const el = document.createElement('div');
+                el.id = sw.id;
+                el.className = 'network-component p-2 rounded-lg shadow-sm flex flex-col items-center';
+                el.innerHTML = `${sw.icon}<p class="text-xs font-semibold mt-1">${sw.label}</p>`;
+                el.dataset.title = 'Phần Mềm Mạng';
+                el.dataset.description = softwareDescription;
+                container.appendChild(el);
+            });
+
+            // --- Vẽ đường nối ---
+            function drawLine(el1, el2, options = {}) {
+                const {
+                    isAnimated = false,
+                    additionalClass = '',
+                    startFrom = 'bottom', // 'top', 'bottom', 'center'
+                    endTo = 'top' // 'top', 'bottom', 'center'
+                } = options;
+
+                const rect1 = el1.getBoundingClientRect();
+                const rect2 = el2.getBoundingClientRect();
+                const diagramRect = diagram.getBoundingClientRect();
+
+                const x1 = rect1.left + rect1.width / 2 - diagramRect.left;
+                let y1;
+                switch (startFrom) {
+                    case 'top': y1 = rect1.top - diagramRect.top; break;
+                    case 'center': y1 = rect1.top + rect1.height / 2 - diagramRect.top; break;
+                    default: y1 = rect1.bottom - diagramRect.top;
+                }
+
+                const x2 = rect2.left + rect2.width / 2 - diagramRect.left;
+                let y2;
+                switch (endTo) {
+                    case 'bottom': y2 = rect2.bottom - diagramRect.top; break;
+                    case 'center': y2 = rect2.top + rect2.height / 2 - diagramRect.top; break;
+                    default: y2 = rect2.top - diagramRect.top;
+                }
+
+                const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                const line = document.createElement('div');
+                line.className = `line ${isAnimated ? 'animated' : ''} ${additionalClass}`;
+                line.style.width = `${length}px`;
+                line.style.height = '3px';
+                line.style.left = `${x1}px`;
+                line.style.top = `${y1}px`;
+                line.style.transformOrigin = '0 0';
+                line.style.transform = `rotate(${angle}deg)`;
+                diagram.appendChild(line);
+            }
+
+            // Vẽ các đường nối chính
+            drawLine(componentData.internet.el, componentData.modem.el, { isAnimated: true });
+            drawLine(componentData.modem.el, componentData.switch.el, { isAnimated: true });
+            drawLine(componentData.switch.el, componentData.an_pc.el, { isAnimated: true, endTo: 'center' });
+            drawLine(componentData.switch.el, componentData.binh_pc.el, { isAnimated: true, endTo: 'center' });
+
+            // Vẽ đường nối phần mềm với máy tính
+            componentData.software.forEach(sw => {
+                const swEl = document.getElementById(sw.id);
+                const pcEl = document.getElementById(sw.user + '-pc');
+                if (swEl && pcEl) {
+                    drawLine(pcEl, swEl, { additionalClass: 'internal', startFrom: 'center' });
+                }
+            });
+
+            // --- Logic cho Modal ---
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalContent = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            function openModal(title, description) {
+                modalTitle.textContent = title;
+                modalDescription.textContent = description;
+                modalBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95', 'opacity-0');
+            }
+
+            function closeModal() {
+                modalBackdrop.classList.add('opacity-0');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                     modalBackdrop.classList.add('pointer-events-none');
+                }, 300);
+            }
+
+            // Gán sự kiện click cho tất cả component
+            document.querySelectorAll('.network-component').forEach(comp => {
+                const data = Object.values(componentData).find(c => c.el === comp) || 
+                             componentData.software.find(s => document.getElementById(s.id) === comp);
+                
+                let title = comp.dataset.title;
+                let description = comp.dataset.description;
+
+                if (data && data.title) title = data.title;
+                if (data && data.description) description = data.description;
+
+                comp.addEventListener('click', () => {
+                    openModal(title, description);
+                });
+            });
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === modalBackdrop) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
