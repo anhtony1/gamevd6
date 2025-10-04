@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghép nối tình huống - Mạng có dây & không dây</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .item.dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+    .target.drag-over {
+      border-color: #3b82f6; /* blue-500 */
+      background-color: #eff6ff; /* blue-50 */
+    }
+    .correct {
+      background-color: #dcfce7 !important; /* green-100 */
+      border-color: #22c55e !important; /* green-500 */
+    }
+    .wrong {
+      background-color: #fee2e2 !important; /* red-100 */
+      border-color: #ef4444 !important; /* red-500 */
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    /* Thêm style cho thông báo phản hồi */
+    .feedback-message {
+        position: absolute;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 1.5rem; /* 24px */
+        font-weight: bold;
+        color: white;
+        opacity: 0;
+        animation: fade-up 1s ease-out;
+        pointer-events: none; /* Đảm bảo không cản trở việc click */
+        z-index: 10;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    .feedback-message.correct {
+        background-color: #22c55e; /* green-500 */
+    }
+    .feedback-message.wrong {
+        background-color: #ef4444; /* red-500 */
+    }
+
+    @keyframes fade-up {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scale(0.5);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-50px) scale(1);
+        }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div class="relative w-full max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Ghép nối tình huống 🎮</h1>
+      <p class="text-gray-600 mt-2">Kéo các tình huống ở cột trái và thả vào loại mạng phù hợp ở cột phải.</p>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-center gap-8">
+      <!-- Cột A: Tình huống (Kéo) -->
+      <div id="item-container" class="w-full md:w-1/2 bg-gray-50 p-4 rounded-xl">
+        <h2 class="text-xl font-semibold text-center text-gray-700 mb-4">Tình huống</h2>
+        <div class="space-y-3">
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wireless">📍 Quán cà phê</div>
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wired">🏢 Văn phòng công ty</div>
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wired">🏫 Phòng máy tính</div>
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wireless">✈️ Sân bay</div>
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wired">🖥️ Trung tâm dữ liệu</div>
+          <div class="item p-4 bg-sky-100 border-2 border-sky-300 rounded-lg cursor-grab text-center font-medium text-sky-800 transition-transform duration-200" draggable="true" data-answer="Wireless">🌳 Công viên</div>
+        </div>
+      </div>
+
+      <!-- Cột B: Loại mạng (Thả) -->
+      <div class="w-full md:w-1/2 p-4">
+        <h2 class="text-xl font-semibold text-center text-gray-700 mb-4">Loại mạng</h2>
+        <div class="space-y-4" id="target-container">
+          <div class="target p-4 border-2 border-dashed border-gray-400 rounded-lg min-h-[120px] transition-colors duration-200" data-correct="Wireless">
+            <span class="font-semibold text-gray-700">Mạng không dây (Wi-Fi)</span>
+            <div class="dropped-items mt-2 space-y-2"></div>
+          </div>
+          <div class="target p-4 border-2 border-dashed border-gray-400 rounded-lg min-h-[120px] transition-colors duration-200" data-correct="Wired">
+            <span class="font-semibold text-gray-700">Mạng có dây (Ethernet)</span>
+            <div class="dropped-items mt-2 space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="completion-message" class="text-center mt-8 hidden">
+        <p class="text-2xl font-bold text-green-600">🎉 Hoàn thành xuất sắc! 🎉</p>
+        <button id="reset-button" class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+            Chơi lại
+        </button>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const completionMessage = document.getElementById('completion-message');
+      const resetButton = document.getElementById('reset-button');
+      const itemContainer = document.getElementById('item-container');
+      const targetContainer = document.getElementById('target-container');
+      const mainContainer = document.querySelector('.relative.w-full');
+
+      let draggedItem = null;
+      let correctDrops = 0;
+      let totalItems = 0;
+      
+      // Audio Context để tạo âm thanh
+      let audioCtx;
+      
+      // Hàm tạo âm thanh
+      function playSound(isCorrect) {
+          if (!audioCtx) {
+            try {
+              audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+              console.error("Web Audio API is not supported in this browser");
+              return;
+            }
+          }
+
+          const oscillator = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+
+          if (isCorrect) {
+              oscillator.type = 'sine';
+              oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+              gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+          } else {
+              oscillator.type = 'square';
+              oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+              gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+          }
+          oscillator.start(audioCtx.currentTime);
+          oscillator.stop(audioCtx.currentTime + 0.5);
+      }
+      
+      // Hàm hiển thị thông báo phản hồi
+      function showFeedbackMessage(targetElement, isCorrect) {
+          const message = document.createElement('div');
+          message.className = 'feedback-message';
+          if (isCorrect) {
+              message.textContent = 'Chính xác!';
+              message.classList.add('correct');
+          } else {
+              message.textContent = 'Sai rồi!';
+              message.classList.add('wrong');
+          }
+          
+          const rect = targetElement.getBoundingClientRect();
+          const containerRect = mainContainer.getBoundingClientRect();
+
+          // Thêm message vào DOM trước để có kích thước
+          mainContainer.appendChild(message);
+          
+          const messageRect = message.getBoundingClientRect();
+          message.style.left = `${rect.left - containerRect.left + (rect.width - messageRect.width) / 2}px`;
+          message.style.top = `${rect.top - containerRect.top + (rect.height - messageRect.height) / 2}px`;
+          
+          setTimeout(() => {
+              message.remove();
+          }, 1000);
+      }
+
+      // Lưu lại trạng thái HTML ban đầu của các container
+      const initialItemsHTML = itemContainer.innerHTML;
+      const initialTargetsHTML = targetContainer.innerHTML;
+
+      function initializeGame() {
+        // Lấy các phần tử item và target hiện tại trong DOM
+        const items = document.querySelectorAll(".item");
+        const targets = document.querySelectorAll(".target");
+        
+        totalItems = items.length;
+
+        items.forEach(item => {
+          item.addEventListener("dragstart", (e) => {
+            draggedItem = item;
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+
+          item.addEventListener("dragend", () => {
+            if (draggedItem) {
+                draggedItem.classList.remove("dragging");
+            }
+            draggedItem = null;
+          });
+        });
+
+        targets.forEach(target => {
+          target.addEventListener("dragover", e => {
+            e.preventDefault();
+            target.classList.add("drag-over");
+          });
+
+          target.addEventListener("dragleave", () => {
+            target.classList.remove("drag-over");
+          });
+
+          target.addEventListener("drop", (e) => {
+            e.preventDefault();
+            target.classList.remove("drag-over");
+            
+            if (draggedItem && draggedItem.style.display !== 'none') {
+              if (draggedItem.dataset.answer === target.dataset.correct) {
+                playSound(true);
+                showFeedbackMessage(target, true);
+                target.classList.add("correct");
+                const droppedItemsContainer = target.querySelector('.dropped-items');
+                
+                const droppedElement = document.createElement('div');
+                droppedElement.className = 'p-2 bg-green-200 border border-green-400 text-green-800 rounded-md text-sm';
+                droppedElement.textContent = "✅ " + draggedItem.textContent;
+                droppedItemsContainer.appendChild(droppedElement);
+                
+                draggedItem.style.display = "none";
+                correctDrops++;
+                checkCompletion();
+              } else {
+                playSound(false);
+                showFeedbackMessage(target, false);
+                target.classList.add("wrong");
+                setTimeout(() => target.classList.remove("wrong"), 800);
+              }
+            }
+          });
+        });
+      }
+      
+      function checkCompletion() {
+        if (correctDrops === totalItems) {
+          completionMessage.classList.remove('hidden');
+        }
+      }
+
+      function resetGame() {
+        // Đặt lại HTML của các container về trạng thái ban đầu
+        itemContainer.innerHTML = initialItemsHTML;
+        targetContainer.innerHTML = initialTargetsHTML;
+
+        // Đặt lại trạng thái trò chơi
+        correctDrops = 0;
+        draggedItem = null;
+        completionMessage.classList.add('hidden');
+
+        // Khởi tạo lại game để gán lại các sự kiện cho các phần tử mới
+        initializeGame();
+      }
+
+      resetButton.addEventListener('click', resetGame);
+      
+      // Khởi tạo game lần đầu
+      initializeGame();
+    });
+  </script>
+</body>
+</html>
+
+
